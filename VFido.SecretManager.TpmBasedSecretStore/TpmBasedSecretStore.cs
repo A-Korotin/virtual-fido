@@ -277,6 +277,12 @@ public sealed class TpmBasedSecretStore : IKeyStore, ICredentialKeyImporter, IDi
             }
             using var root = ECDsa.Create(ECCurve.NamedCurves.nistP256);
             var rootCert = AttestationCertificateFactory.CreateSelfSignedRoot(root);
+
+            // save self-signed root CA
+            File.WriteAllBytes(
+                Path.Combine(_directory, "root-ca.der"),
+                rootCert);
+
             using var intermediate = ECDsa.Create(ECCurve.NamedCurves.nistP256);
             var intermediateCert = AttestationCertificateFactory.CreateIntermediate(intermediate, root, rootCert);
             using var leaf = ECDsa.Create(ECCurve.NamedCurves.nistP256);
